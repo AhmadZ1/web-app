@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+{%extends "base.html"%}
+{%block content%}
+{% with messages = get_flashed_messages() %} 
+{% if messages %} 
+  {% for msg in messages %} 
+    <p>{{msg}}</p>
+  {% endfor %}  
+{% endif %}
+{% endwith %}
+<html>
+
+  <head>
+    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
+    <title>Login</title>
+  </head>
+
+  <body>
+    <div class="main">
+      <p class="sign" align="center">Login</p>
+      <form class="form1" method="post">
+        <input class="un " type="text" align="center" name="username" placeholder="Username">
+        <input class="pass" type="password" align="center" name="password" placeholder="Password">
+        <input type="submit" class="submit" align="center" value="log in"></a>
+        <p class="forgot" align="center"><a href="#">Forgot Password?</p>
+        <p align="center" style="color:black;">{{error}}</p>
+      </div>
+      
+  </body>
+
+</html>
+{%endblock%}
