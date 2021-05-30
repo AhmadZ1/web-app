@@ -32,6 +32,13 @@ def get_pass(reason):
   if request.method == "POST":
     #gets password from the form
     password = request.form["password"]
+    # checks if admin is logging in to view accounts' credentials
+    if reason == "is_admin":
+      admin = get_user("admin")
+      if password == admin.password:
+        return render_template("view.html", values=users.query.all())
+      flash("You are not admin")
+      return redirect(url_for("view"))
     # checks if password entered is same as password of user's account (helper function)
     if check_pass(password):
       #if the reason was to change the password
@@ -101,6 +108,7 @@ def credentials():
 
 @profile_BP.route("/are_you_sure", methods=["GET", "POST"])
 def are_you_sure():
+  '''ask user to confirm their account deletion'''
   if request.method == "POST":
     if "delete_account_key" in session:
       return redirect(url_for("profile_BP.del_acc"))
@@ -108,6 +116,7 @@ def are_you_sure():
 
 @profile_BP.route("/delete_account")
 def del_acc():
+  '''deletes user's account'''
   if "delete_account_key" in session:
     user = get_user(session["username"])
     session.pop("delete_account_key", None)

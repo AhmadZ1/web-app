@@ -39,7 +39,7 @@ def home():
 @app.route("/view")
 def view():
   '''displays all the users, and their credentials, in the database'''
-  return render_template("view.html", values=users.query.all())
+  return redirect(url_for("profile_BP.get_pass", reason="is_admin"))
 
 
 @app.route("/logout")
@@ -63,5 +63,4 @@ def logout():
 #runs the app and creates the database
 if __name__ == "__main__":
   db.create_all()
-  port = int(os.environ.get("PORT", 5000))
-  app.run(debug=True, host='0.0.0.0', port=port)
+  app.run(debug=True)
