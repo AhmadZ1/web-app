@@ -1,2 +1,2 @@
 Flask == 1.1.1
-unicorn == 0.12.2
+gunicorn == 20.0.4
