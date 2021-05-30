@@ -32,7 +32,6 @@ def home():
     # renders home page
     return render_template("home.html")
   
-  flash("Please log in first")
   #redirect user to login page
   return redirect(url_for("login_BP.login"))
 
