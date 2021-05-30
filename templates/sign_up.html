@@ -1,13 +1,6 @@
 <!DOCTYPE html>
 {%extends "base.html"%}
 {%block content%}
-{% with messages = get_flashed_messages() %} 
-{% if messages %} 
-  {% for msg in messages %} 
-    <p>{{msg}}</p>
-  {% endfor %}  
-{% endif %}
-{% endwith %}
 <html>
 
   <head>
@@ -28,6 +21,7 @@
         <input class="pass" type="password" align="center" name="password2" placeholder="Confirm Password">
         <input type="submit" class="submit" align="center" value="Sign up"></a>
         <p class="forgot" align="center"><a href="#">Forgot Password?</p>
+        <p aling="center">Have an account? <a href="login"></a>Log in</a></p>
         <p align="center" style="color:black;">{{error}}</p>
       </div>
       
