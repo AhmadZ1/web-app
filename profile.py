@@ -21,26 +21,31 @@ def profile():
     #render profile page for the user
     return render_template("profile.html", username=session["username"])
   #otherwise user is not logged in
-  #flash a message to let user know they are not logged in
-  flash("You are not logged in")
   #redirects user to home page
   return redirect(url_for("home"))
 
-@profile_BP.route("/change_password", methods=["GET", "POST"])
-def change_pass():
+@profile_BP.route("/get_password/<reason>", methods=["GET", "POST"])
+def get_pass(reason):
+  print(reason)
   '''requests the old password from user to check if they can change the password or not'''
   #if page gives post request
   if request.method == "POST":
     #gets password from the form
-    password = request.form["old_password"]
+    password = request.form["password"]
     # checks if password entered is same as password of user's account (helper function)
     if check_pass(password):
-      # redirect user to page to choose new password
-      return redirect(url_for("profile_BP.new_pass"))
+      #if the reason was to change the password
+      if reason == "new_pass":
+        #redirect user to page to choose new password
+        return redirect(url_for("profile_BP.new_pass"))
+      elif reason == "del_acc":
+        session["delete_account_key"] = "ad64fa64dsasf4da64"
+        #redirect user to delete account
+        return redirect(url_for("profile_BP.are_you_sure"))
     #otherwise if password doesn't match user's password, give Incorrect password error
     return render_template("change_pass.html", error="Incorrect password")
   #render change_pass template by default (when no post request)
-  return render_template("change_pass.html")
+  return render_template("get_pass.html")
 
 @profile_BP.route("/new_pass", methods=["GET", "POST"])
 def new_pass():
@@ -54,8 +59,13 @@ def new_pass():
     if new_password != rnew_password:
       #give error that passwords don't match
       return render_template("new_pass.html", error="passwords don't match")
+    #check if the password is good
+    result = pass_strength(new_password)
+    if result != "good":
+      #if not good give the specified error to the user
+      return render_template("new_pass.html", error=result)
     #get the user from the database
-    user = users.query.filter_by(username=session["username"]).first()
+    user = get_user(session["username"])
     #check if the user's username or email is same as chosen new password
     if user.username == new_password or user.email == new_password:
       #give error that password can't be same as username or email
@@ -87,3 +97,26 @@ def credentials():
     return render_template("get_pass.html", error="Incorrect password")
   #by default render the get_pass template
   return render_template("get_pass.html")
+
+
+@profile_BP.route("/are_you_sure", methods=["GET", "POST"])
+def are_you_sure():
+  if request.method == "POST":
+    if "delete_account_key" in session:
+      return redirect(url_for("profile_BP.del_acc"))
+  return render_template("confirm.html")
+
+@profile_BP.route("/delete_account")
+def del_acc():
+  if "delete_account_key" in session:
+    user = get_user(session["username"])
+    session.pop("delete_account_key", None)
+    session.pop("username", None)
+    session.pop("password", None)
+    session.pop("email", None)
+    db.session.delete(user)
+    db.session.commit()
+    flash("account deleted")
+    return redirect(url_for("login_BP.login"))
+  flash("Please confirm your Password first")
+  return redirect(url_for("profile_BP.get_pass", reason="del_acc"))

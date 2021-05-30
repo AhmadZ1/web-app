@@ -6,6 +6,7 @@ description: the main file that runs the app
 from flask import Flask, redirect, url_for, render_template, request, session, flash
 from datetime import timedelta
 from flask_sqlalchemy import SQLAlchemy
+import os
 
 #import the app and database from config.py
 from config import app, db, users
@@ -21,8 +22,7 @@ app.register_blueprint(profile_BP, url_prefix="")
 
 app.permanent_session_lifetime = timedelta(days=5)
 
-#makes session last longer, even if closed the browser 
-session.permanent = True
+
 
 @app.route("/")
 def home():
@@ -31,8 +31,8 @@ def home():
   if "username" in session:
     # renders home page
     return render_template("home.html")
-  #otherwise flash a message to let user know they aren't logged in
-  flash("you are not logged in")
+  
+  flash("Please log in first")
   #redirect user to login page
   return redirect(url_for("login_BP.login"))
 
@@ -53,15 +53,16 @@ def logout():
     session.pop("password", None)
     session.pop("email", None)
     #flash a message to let user know he/she have been logged out
-    flash("you have been logged out!")
+    flash("You have been logged out!")
     #redirects user to login page
     return redirect(url_for("login_BP.login"))
   #if user isn't logged in flash a message to let user know he/she isn't logged in
-  flash("you are not logged in!")
+  flash("You are not logged in!")
   #redirects user to login page
   return redirect(url_for("login_BP.login"))
 
 #runs the app and creates the database
 if __name__ == "__main__":
   db.create_all()
-  app.run(debug=True)
+  port = int(os.environ.get("PORT", 5000))
+  app.run(debug=True, host='0.0.0.0', port=port)

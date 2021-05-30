@@ -11,7 +11,7 @@ from config import app, db, users
 
 def contains_digits(password):
   for i in password:
-    if i.is_digit(): return True
+    if i.isdigit(): return True
   return False
 
 '''helpers'''

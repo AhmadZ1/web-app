@@ -24,6 +24,8 @@ def login():
     return redirect(url_for("home"))
   #checks if the page gives a post request
   if request.method == "POST":
+    #makes session last longer, even if closed the browser 
+    session.permanent = True
     #gets the entered username and password from the form
     username = request.form["username"]
     password = request.form["password"]

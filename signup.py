@@ -25,6 +25,8 @@ def signup():
     return redirect(url_for("home"))
   #checks if page gives post request
   if request.method == "POST":
+    #makes session last longer, even if closed the browser 
+    session.permanent = True
     #gets credentials from the form
     #username, email, password, and repeated password
     username = request.form["username"]
